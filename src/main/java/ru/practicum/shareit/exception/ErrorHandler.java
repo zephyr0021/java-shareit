@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,4 +41,13 @@ public class ErrorHandler {
         log.warn("Конфликт данных: {}", e.getMessage());
         return new ErrorResponse(e.getName(), e.getMessage());
     }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingRequestHeaderException(final MissingRequestHeaderException e) {
+        log.warn("Не передан обязательный хэдер: {}", e.getMessage());
+        return new ErrorResponse("missing required header",
+                String.format("Required request header %s is not present", e.getHeaderName()));
+    }
+
 }
