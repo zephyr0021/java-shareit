@@ -22,9 +22,9 @@ public class UserService {
     }
 
     public UserDto getUserById(long id) {
-        return userRepository.findById(id).
-                map(UserMapper::toUserDto).
-                orElseThrow(() -> new NotFoundException("User not found"));
+        return userRepository.findById(id)
+                .map(UserMapper::toUserDto)
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     public UserDto createUser(NewUserRequest request) {
