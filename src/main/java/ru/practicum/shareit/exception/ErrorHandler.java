@@ -50,4 +50,11 @@ public class ErrorHandler {
                 String.format("Required request header %s is not present", e.getHeaderName()));
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessDeniedException(final AccessDeniedException e) {
+        log.warn("Ошибка доступа: {}", e.getMessage());
+        return new ErrorResponse(e.getName(), e.getMessage());
+    }
+
 }

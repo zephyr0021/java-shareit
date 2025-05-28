@@ -28,6 +28,39 @@ public class ItemRepositoryImpl implements ItemRepository {
         return item;
     }
 
+    @Override
+    public List<Item> findAllFromUserId(long userId) {
+        return items.stream()
+                .filter(item -> item.getOwnerId().equals(userId))
+                .toList();
+    }
+
+    @Override
+    public List<Item> searchItems(String query) {
+        String loweredQuery = query.toLowerCase();
+        if (query.isEmpty()) return List.of();
+        return items.stream()
+                .filter(item -> (item.getName().toLowerCase().contains(loweredQuery) ||
+                        item.getDescription().toLowerCase().contains(loweredQuery)) &&
+                        item.getAvailable())
+                .toList();
+    }
+
+    @Override
+    public Item updateItem(Item newItem) {
+        Item updatedItem = items.stream()
+                .filter(item -> item.getId().equals(newItem.getId()))
+                .findFirst()
+                .map(item -> {
+                    item.setName(newItem.getName());
+                    item.setDescription(newItem.getDescription());
+                    item.setAvailable(newItem.getAvailable());
+                    return item;
+                }).orElse(null);
+        log.info("Updated item: {}", updatedItem);
+        return updatedItem;
+    }
+
     private long generateId() {
         long lastId = items.stream()
                 .mapToLong(Item::getId)
