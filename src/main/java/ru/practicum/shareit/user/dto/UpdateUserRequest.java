@@ -2,13 +2,11 @@ package ru.practicum.shareit.user.dto;
 
 import jakarta.validation.constraints.Email;
 import lombok.Data;
-import ru.practicum.shareit.user.validation.UniqueEmail;
 
 @Data
 public class UpdateUserRequest {
     private String name;
-    @UniqueEmail
-    @Email
+    @Email(message = "email must be a well-formed email address")
     private String email;
 
     public boolean hasName() {

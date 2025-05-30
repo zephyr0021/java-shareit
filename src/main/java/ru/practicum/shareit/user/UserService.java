@@ -45,4 +45,8 @@ public class UserService {
     public void deleteUser(long id) {
         userRepository.deleteUser(id);
     }
+
+    public void clearData() {
+        userRepository.clearData();
+    }
 }

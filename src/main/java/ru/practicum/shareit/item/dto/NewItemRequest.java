@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 public class NewItemRequest {
-    @NotBlank
+    @NotBlank(message = "name must not be blank or null or empty")
     private String name;
-    @NotBlank
+    @NotBlank(message = "description must not be blank or null or empty")
     private String description;
-    @NotNull
+    @NotNull(message = "available must not be blank or null or empty")
     private Boolean available;
 }

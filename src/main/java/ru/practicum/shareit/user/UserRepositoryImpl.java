@@ -59,6 +59,11 @@ public class UserRepositoryImpl implements UserRepository {
                 .anyMatch(user -> user.getEmail().equals(email));
     }
 
+    @Override
+    public void clearData() {
+        users.clear();
+    }
+
     private long generateId() {
         long lastId = users.stream()
                 .mapToLong(User::getId)

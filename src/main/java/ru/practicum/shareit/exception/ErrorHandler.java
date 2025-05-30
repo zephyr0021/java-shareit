@@ -29,7 +29,7 @@ public class ErrorHandler {
         List<String> errors = ex.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .toList();
-        String message = String.join("\n", errors);
+        String message = String.join(", ", errors);
         log.warn("Ошибка валидации: {}", errors);
 
         return new ErrorResponse("validation error", message);
