@@ -203,5 +203,18 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.message").value("email must be a well-formed email address"));
     }
 
+    @Test
+    void updateUserEmailExisting() throws Exception {
+        String json = "{\n" +
+                "  \"email\": \"test2@test.com\"\n" +
+                "}";
+        mockMvc.perform(patch("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value("conflict data"))
+                .andExpect(jsonPath("$.message").value("User test2@test.com already exists"));
+    }
+
 
 }
