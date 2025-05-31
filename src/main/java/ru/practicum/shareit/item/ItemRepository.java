@@ -15,4 +15,6 @@ public interface ItemRepository {
     List<Item> searchItems(String query);
 
     Item updateItem(Item item);
+
+    void clearData();
 }

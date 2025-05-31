@@ -61,6 +61,11 @@ public class ItemRepositoryImpl implements ItemRepository {
         return updatedItem;
     }
 
+    @Override
+    public void clearData() {
+        items.clear();
+    }
+
     private long generateId() {
         long lastId = items.stream()
                 .mapToLong(Item::getId)
