@@ -3,41 +3,35 @@ package ru.practicum.shareit.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Slf4j
 public class UserRepositoryImpl implements UserRepository {
-    private final List<User> users = new ArrayList<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
-    public List<User> findAll() {
-        return users;
+    public Collection<User> findAll() {
+        return users.values();
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        return users.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst();
+        return Optional.ofNullable(users.get(id));
     }
 
     @Override
     public User createUser(User user) {
-        user.setId(generateId());
-        users.add(user);
+        Long userId = generateId();
+        user.setId(userId);
+        users.put(userId, user);
         log.info("Created user: {}", user);
         return user;
     }
 
     @Override
     public User updateUser(User newUser) {
-        User updatedUser = users.stream()
-                .filter(user -> user.getId().equals(newUser.getId()))
-                .findFirst()
+        User updatedUser = findById(newUser.getId())
                 .map(user -> {
                     user.setName(newUser.getName());
                     user.setEmail(newUser.getEmail());
@@ -50,13 +44,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteUser(Long id) {
-        users.removeIf(user -> user.getId().equals(id));
+        users.remove(id);
         log.info("Deleted user: {}", id);
     }
 
     @Override
     public boolean existsByEmail(User user) {
-        return users.stream()
+        return users.values().stream()
                 .filter(u -> !Objects.equals(u.getId(), user.getId()))
                 .anyMatch(u -> u.getEmail().equals(user.getEmail()));
     }
@@ -67,8 +61,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private Long generateId() {
-        long lastId = users.stream()
-                .mapToLong(User::getId)
+        long lastId = users.keySet().stream()
+                .mapToLong(id -> id)
                 .max()
                 .orElse(0);
         return lastId + 1;
