@@ -38,7 +38,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<Item> searchItems(String query) {
         String loweredQuery = query.toLowerCase();
-        if (query.isEmpty()) return List.of();
+        if (query.isBlank()) return List.of();
         return items.stream()
                 .filter(item -> (item.getName().toLowerCase().contains(loweredQuery) ||
                         item.getDescription().toLowerCase().contains(loweredQuery)) &&
