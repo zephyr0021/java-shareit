@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository {
-    Optional<Item> findById(long id);
+    Optional<Item> findById(Long id);
 
     Item createItem(Item item);
 
-    List<Item> findAllFromUserId(long id);
+    List<Item> findAllFromUserId(Long id);
 
     List<Item> searchItems(String query);
 

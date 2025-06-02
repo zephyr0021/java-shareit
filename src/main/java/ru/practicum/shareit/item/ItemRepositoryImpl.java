@@ -14,7 +14,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     List<Item> items = new ArrayList<>();
 
     @Override
-    public Optional<Item> findById(long id) {
+    public Optional<Item> findById(Long id) {
         return items.stream()
                 .filter(item -> item.getId().equals(id))
                 .findFirst();
@@ -29,7 +29,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public List<Item> findAllFromUserId(long userId) {
+    public List<Item> findAllFromUserId(Long userId) {
         return items.stream()
                 .filter(item -> item.getOwnerId().equals(userId))
                 .toList();
@@ -66,7 +66,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         items.clear();
     }
 
-    private long generateId() {
+    private Long generateId() {
         long lastId = items.stream()
                 .mapToLong(Item::getId)
                 .max()

@@ -18,7 +18,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(long id) {
+    public Optional<User> findById(Long id) {
         return users.stream()
                 .filter(user -> user.getId().equals(id))
                 .findFirst();
@@ -48,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteUser(long id) {
+    public void deleteUser(Long id) {
         users.removeIf(user -> user.getId().equals(id));
         log.info("Deleted user: {}", id);
     }
@@ -64,7 +64,7 @@ public class UserRepositoryImpl implements UserRepository {
         users.clear();
     }
 
-    private long generateId() {
+    private Long generateId() {
         long lastId = users.stream()
                 .mapToLong(User::getId)
                 .max()

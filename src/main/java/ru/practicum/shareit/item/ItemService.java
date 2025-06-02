@@ -19,28 +19,28 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    public ItemDto getItemById(long userId, long id) {
+    public ItemDto getItemById(Long userId, Long id) {
         isUserExistOrThrowNotFound(userId);
         return itemRepository.findById(id)
                 .map(ItemMapper::toItemDto)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
     }
 
-    public List<ItemDto> getAllItemsByUserId(long userId) {
+    public List<ItemDto> getAllItemsByUserId(Long userId) {
         isUserExistOrThrowNotFound(userId);
         return itemRepository.findAllFromUserId(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
     }
 
-    public List<ItemDto> searchItems(long userId, String query) {
+    public List<ItemDto> searchItems(Long userId, String query) {
         isUserExistOrThrowNotFound(userId);
         return itemRepository.searchItems(query).stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
     }
 
-    public ItemDto createItem(NewItemRequest request, long userId) {
+    public ItemDto createItem(NewItemRequest request, Long userId) {
         isUserExistOrThrowNotFound(userId);
         Item item = ItemMapper.toItem(request);
         item.setOwnerId(userId);
@@ -49,7 +49,7 @@ public class ItemService {
         return ItemMapper.toItemDto(item);
     }
 
-    public ItemDto updateItem(long userId, long itemId, UpdateItemRequest request) {
+    public ItemDto updateItem(Long userId, Long itemId, UpdateItemRequest request) {
         getItemById(userId, itemId);
         Item newItem = itemRepository.findAllFromUserId(userId).stream()
                 .filter(item -> item.getId().equals(itemId))
@@ -62,7 +62,7 @@ public class ItemService {
 
     }
 
-    private void isUserExistOrThrowNotFound(long userId) {
+    private void isUserExistOrThrowNotFound(Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("X-Sharer-User-Id not found"));
     }
 }

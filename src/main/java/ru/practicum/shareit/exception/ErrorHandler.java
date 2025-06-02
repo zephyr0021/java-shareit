@@ -16,14 +16,14 @@ import java.util.List;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler()
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
         log.warn("Обьект не найден: {}", e.getMessage());
         return new ErrorResponse(e.getName(), e.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler()
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult().getFieldErrors().stream()
@@ -35,14 +35,14 @@ public class ErrorHandler {
         return new ErrorResponse("validation error", message);
     }
 
-    @ExceptionHandler(ConflictException.class)
+    @ExceptionHandler()
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(final ConflictException e) {
         log.warn("Конфликт данных: {}", e.getMessage());
         return new ErrorResponse(e.getName(), e.getMessage());
     }
 
-    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ExceptionHandler()
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingRequestHeaderException(final MissingRequestHeaderException e) {
         log.warn("Не передан обязательный хэдер: {}", e.getMessage());
@@ -50,7 +50,7 @@ public class ErrorHandler {
                 String.format("Required request header %s is not present", e.getHeaderName()));
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler()
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDeniedException(final AccessDeniedException e) {
         log.warn("Ошибка доступа: {}", e.getMessage());
