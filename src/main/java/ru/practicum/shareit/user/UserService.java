@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.NewUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
 
@@ -29,8 +32,8 @@ public class UserService {
 
     public UserDto createUser(NewUserRequest request) {
         User user = UserMapper.toUser(request);
+        checkEmailUniqueOrThrow(user);
         user = userRepository.createUser(user);
-
         return UserMapper.toUserDto(user);
     }
 
@@ -38,6 +41,7 @@ public class UserService {
         User newUser = userRepository.findById(id)
                 .map(user -> UserMapper.updateUserFields(user, request))
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found"));
+        checkEmailUniqueOrThrow(newUser);
         newUser = userRepository.updateUser(newUser);
         return UserMapper.toUserDto(newUser);
     }
@@ -48,5 +52,12 @@ public class UserService {
 
     public void clearData() {
         userRepository.clearData();
+    }
+
+    private void checkEmailUniqueOrThrow(User user) {
+        if (userRepository.existsByEmail(user)) {
+            log.warn("User {} already exists", user.getEmail());
+            throw new ConflictException("User " + user.getEmail() + " already exists");
+        }
     }
 }

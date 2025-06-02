@@ -14,7 +14,7 @@ public interface UserRepository {
 
     void deleteUser(Long id);
 
-    boolean existsByEmail(String email);
+    boolean existsByEmail(User user);
 
     void clearData();
 }

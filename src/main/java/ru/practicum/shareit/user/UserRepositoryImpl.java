@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -54,9 +55,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existsByEmail(String email) {
+    public boolean existsByEmail(User user) {
         return users.stream()
-                .anyMatch(user -> user.getEmail().equals(email));
+                .filter(u -> !Objects.equals(u.getId(), user.getId()))
+                .anyMatch(u -> u.getEmail().equals(user.getEmail()));
     }
 
     @Override
