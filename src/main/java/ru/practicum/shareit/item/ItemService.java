@@ -10,8 +10,10 @@ import ru.practicum.shareit.item.dto.UpdateItemRequest;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,48 +23,48 @@ public class ItemService {
 
     public ItemDto getItemById(Long userId, Long id) {
         isUserExistOrThrowNotFound(userId);
-        return itemRepository.findById(id)
+        return itemRepository.findItemById(id)
                 .map(ItemMapper::toItemDto)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
     }
 
     public List<ItemDto> getAllItemsByUserId(Long userId) {
         isUserExistOrThrowNotFound(userId);
-        return itemRepository.findAllFromUserId(userId).stream()
+        return itemRepository.findItemsByOwner_Id(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
     }
 
     public List<ItemDto> searchItems(Long userId, String query) {
         isUserExistOrThrowNotFound(userId);
-        return itemRepository.searchItems(query).stream()
+        return itemRepository.searchItemsByQuery(query).stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
     }
 
     public ItemDto createItem(NewItemRequest request, Long userId) {
-        isUserExistOrThrowNotFound(userId);
+        User user = isUserExistOrThrowNotFound(userId);
         Item item = ItemMapper.toItem(request);
-        item.setOwnerId(userId);
-        item = itemRepository.createItem(item);
+        item.setOwner(user);
+        item = itemRepository.save(item);
 
         return ItemMapper.toItemDto(item);
     }
+//
+//    public ItemDto updateItem(Long userId, Long itemId, UpdateItemRequest request) {
+//        getItemById(userId, itemId);
+//        Item newItem = itemRepository.findAllFromUserId(userId).stream()
+//                .filter(item -> item.getId().equals(itemId))
+//                .findFirst()
+//                .map(item -> ItemMapper.updateItemFields(item, request))
+//                .orElseThrow(() -> new AccessDeniedException("Cannot access to this item"));
+//        newItem = itemRepository.updateItem(newItem);
+//
+//        return ItemMapper.toItemDto(newItem);
+//
+//    }
 
-    public ItemDto updateItem(Long userId, Long itemId, UpdateItemRequest request) {
-        getItemById(userId, itemId);
-        Item newItem = itemRepository.findAllFromUserId(userId).stream()
-                .filter(item -> item.getId().equals(itemId))
-                .findFirst()
-                .map(item -> ItemMapper.updateItemFields(item, request))
-                .orElseThrow(() -> new AccessDeniedException("Cannot access to this item"));
-        newItem = itemRepository.updateItem(newItem);
-
-        return ItemMapper.toItemDto(newItem);
-
-    }
-
-    private void isUserExistOrThrowNotFound(Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("X-Sharer-User-Id not found"));
+    private User isUserExistOrThrowNotFound(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("X-Sharer-User-Id not found"));
     }
 }
