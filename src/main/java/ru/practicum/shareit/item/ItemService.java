@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -13,10 +14,10 @@ import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -42,6 +43,7 @@ public class ItemService {
                 .toList();
     }
 
+    @Transactional
     public ItemDto createItem(NewItemRequest request, Long userId) {
         User user = isUserExistOrThrowNotFound(userId);
         Item item = ItemMapper.toItem(request);
@@ -50,19 +52,21 @@ public class ItemService {
 
         return ItemMapper.toItemDto(item);
     }
-//
-//    public ItemDto updateItem(Long userId, Long itemId, UpdateItemRequest request) {
-//        getItemById(userId, itemId);
-//        Item newItem = itemRepository.findAllFromUserId(userId).stream()
-//                .filter(item -> item.getId().equals(itemId))
-//                .findFirst()
-//                .map(item -> ItemMapper.updateItemFields(item, request))
-//                .orElseThrow(() -> new AccessDeniedException("Cannot access to this item"));
-//        newItem = itemRepository.updateItem(newItem);
-//
-//        return ItemMapper.toItemDto(newItem);
-//
-//    }
+
+    @Transactional
+    public ItemDto updateItem(Long userId, Long itemId, UpdateItemRequest request) {
+        getItemById(userId, itemId);
+        Item newItem = itemRepository.findItemsByOwner_Id(userId).stream()
+                .filter(item -> item.getId().equals(itemId))
+                .findFirst()
+                .map(ItemMapper::toItem)
+                .map(item -> ItemMapper.updateItemFields(item, request))
+                .orElseThrow(() -> new AccessDeniedException("Cannot access to this item"));
+        newItem = itemRepository.save(newItem);
+
+        return ItemMapper.toItemDto(newItem);
+
+    }
 
     private User isUserExistOrThrowNotFound(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("X-Sharer-User-Id not found"));

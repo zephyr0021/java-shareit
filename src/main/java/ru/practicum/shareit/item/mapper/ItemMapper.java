@@ -11,12 +11,11 @@ import ru.practicum.shareit.item.model.Item;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemMapper {
     public static Item toItem(NewItemRequest request) {
-        Item item = new Item();
-        item.setName(request.getName());
-        item.setDescription(request.getDescription());
-        item.setAvailable(request.getAvailable());
+        return fillItem(request.getName(), request.getDescription(), request.getAvailable());
+    }
 
-        return item;
+    public static Item toItem(ItemShort itemShort) {
+        return fillItem(itemShort.getName(), itemShort.getDescription(), itemShort.getAvailable());
     }
 
     public static ItemDto toItemDto(ItemShort item) {
@@ -50,6 +49,15 @@ public final class ItemMapper {
         itemDto.setDescription(description);
         itemDto.setAvailable(available);
         return itemDto;
+    }
+
+    private static Item fillItem(String name, String description, Boolean available) {
+        Item item = new Item();
+        item.setName(name);
+        item.setDescription(description);
+        item.setAvailable(available);
+
+        return item;
     }
 
 }

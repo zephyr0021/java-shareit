@@ -40,10 +40,10 @@ public class ItemController {
                               @Valid @RequestBody NewItemRequest request) {
         return itemService.createItem(request, userId);
     }
-//
-//    @PatchMapping("/{itemId}")
-//    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId,
-//                              @RequestBody UpdateItemRequest request) {
-//        return itemService.updateItem(userId, itemId, request);
-//    }
+
+    @PatchMapping("/{itemId}")
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId,
+                              @RequestBody UpdateItemRequest request) {
+        return itemService.updateItem(userId, itemId, request);
+    }
 }
