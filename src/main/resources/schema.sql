@@ -12,3 +12,14 @@ CREATE TABLE IF NOT EXISTS items (
     user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     request_id BIGINT
 );
+
+CREATE TABLE IF NOT EXISTS bookings (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    booking_start TIMESTAMP WITHOUT TIME ZONE,
+    booking_end TIMESTAMP WITHOUT TIME ZONE,
+    item_id BIGINT REFERENCES items(id) ON DELETE CASCADE,
+    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    status VARCHAR(20) NOT NULL DEFAULT 'WAITING',
+    CONSTRAINT booking_end_after_start CHECK (booking_end > booking_start),
+    CONSTRAINT booking_valid_status CHECK (status IN ('WAITING', 'APPROVED', 'REJECTED', 'CANCELLED'))
+);
