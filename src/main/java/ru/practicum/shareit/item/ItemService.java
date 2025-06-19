@@ -10,8 +10,8 @@ import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserValidationService;
 
 import java.util.List;
 
@@ -20,24 +20,24 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ItemService {
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final UserValidationService userValidationService;
 
     public ItemDto getItemById(Long userId, Long id) {
-        isUserExistOrThrowNotFound(userId);
+        userValidationService.isUserExistOrThrowNotFound(userId);
         return itemRepository.findItemById(id)
                 .map(ItemMapper::toItemDto)
                 .orElseThrow(() -> new NotFoundException("Item not found"));
     }
 
     public List<ItemDto> getAllItemsByUserId(Long userId) {
-        isUserExistOrThrowNotFound(userId);
+        userValidationService.isUserExistOrThrowNotFound(userId);
         return itemRepository.findItemsByOwner_Id(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
     }
 
     public List<ItemDto> searchItems(Long userId, String query) {
-        isUserExistOrThrowNotFound(userId);
+        userValidationService.isUserExistOrThrowNotFound(userId);
         return itemRepository.searchItemsByQuery(query).stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
@@ -45,7 +45,7 @@ public class ItemService {
 
     @Transactional
     public ItemDto createItem(NewItemRequest request, Long userId) {
-        User user = isUserExistOrThrowNotFound(userId);
+        User user = userValidationService.isUserExistOrThrowNotFound(userId);
         Item item = ItemMapper.toItem(request);
         item.setOwner(user);
         item = itemRepository.save(item);
@@ -66,9 +66,5 @@ public class ItemService {
 
         return ItemMapper.toItemDto(newItem);
 
-    }
-
-    private User isUserExistOrThrowNotFound(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("X-Sharer-User-Id not found"));
     }
 }

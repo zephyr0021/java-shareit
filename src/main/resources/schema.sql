@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     booking_start TIMESTAMP WITHOUT TIME ZONE,
     booking_end TIMESTAMP WITHOUT TIME ZONE,
     item_id BIGINT REFERENCES items(id) ON DELETE CASCADE,
-    user_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    booker_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
     status VARCHAR(20) NOT NULL DEFAULT 'WAITING',
     CONSTRAINT booking_end_after_start CHECK (booking_end > booking_start),
     CONSTRAINT booking_valid_status CHECK (status IN ('WAITING', 'APPROVED', 'REJECTED', 'CANCELLED'))
