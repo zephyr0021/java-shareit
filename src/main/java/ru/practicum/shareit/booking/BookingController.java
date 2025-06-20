@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
 
+import java.util.Collection;
+
 /**
  * TODO Sprint add-bookings.
  */
@@ -21,10 +23,22 @@ public class BookingController {
         return bookingService.getBookingById(id, userId);
     }
 
+    @GetMapping
+    public Collection<BookingDto> getBookingsByBooker(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                     @RequestParam(defaultValue = "ALL", required = false) String state) {
+        return bookingService.getAllBookingsByBooker(userId, state);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookingDto createBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                     @Valid @RequestBody NewBookingRequest request) {
         return bookingService.createBooking(request, userId);
+    }
+
+    @PatchMapping("/{bookingId}")
+    public BookingDto approveBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId,
+                                     @RequestParam Boolean approved) {
+        return bookingService.approveBooking(bookingId, userId, approved);
     }
 }

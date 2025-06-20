@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -15,6 +16,9 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserValidationService;
 
+import java.time.OffsetDateTime;
+import java.util.Collection;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -28,6 +32,26 @@ public class BookingService {
         return bookingRepository.findByItemOwnerOrBooker(id, userId)
                 .map(BookingMapper::toBookingDto)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
+    }
+
+    public Collection<BookingDto> getAllBookingsByBooker(Long userId, String state) {
+        userValidationService.isUserExistOrThrowNotFound(userId);
+        OffsetDateTime now = OffsetDateTime.now();
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Collection<BookingShort> bookings = switch (state) {
+            case "ALL" -> bookingRepository.findByBookerId(userId, sort);
+            case "WAITING" -> bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING, sort);
+            case "REJECTED" -> bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED, sort);
+            case "CURRENT" -> bookingRepository.findByBookerIdAndStatusAndStartBeforeAndEndAfter(userId,
+                    BookingStatus.APPROVED, now, now, sort);
+            case "PAST" ->
+                    bookingRepository.findByBookerIdAndStatusAndEndBefore(userId, BookingStatus.APPROVED, now, sort);
+            case "FUTURE" ->
+                    bookingRepository.findByBookerIdAndStatusAndStartAfter(userId, BookingStatus.APPROVED, now, sort);
+            default -> throw new ServerException("Invalid state");
+        };
+
+        return bookings.stream().map(BookingMapper::toBookingDto).toList();
     }
 
     @Transactional
@@ -46,5 +70,19 @@ public class BookingService {
         bookingRepository.save(booking);
 
         return BookingMapper.toBookingDto(booking);
+    }
+
+    @Transactional
+    public BookingDto approveBooking(Long id, Long userId, Boolean approved) {
+        BookingStatus status = approved ? BookingStatus.APPROVED : BookingStatus.REJECTED;
+        int updatedRows = bookingRepository.updateStatusByIdAndOwnerId(id, userId, status);
+
+        if (updatedRows == 0) {
+            throw new ServerException("Booking not updated");
+        }
+
+        return bookingRepository.findBookingById(id)
+                .map(BookingMapper::toBookingDto)
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 }
