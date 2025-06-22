@@ -27,10 +27,10 @@ public final class ItemMapper {
         return fillItemDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable());
     }
 
-    public static ItemWithBookingsAndCommentsDto toItemWithBookingsAndCommentsDto (ItemShort item,
-                                                                                   BookingForItemDto lastBooking,
-                                                                                   BookingForItemDto nextBooking,
-                                                                                   List<CommentDto> comments) {
+    public static ItemWithBookingsAndCommentsDto toItemWithBookingsAndCommentsDto(ItemShort item,
+                                                                                  BookingForItemDto lastBooking,
+                                                                                  BookingForItemDto nextBooking,
+                                                                                  List<CommentDto> comments) {
         ItemWithBookingsAndCommentsDto itemDto = new ItemWithBookingsAndCommentsDto();
 
         itemDto.setId(item.getId());
@@ -44,8 +44,8 @@ public final class ItemMapper {
         return itemDto;
     }
 
-    public static ItemWithBookingsAndCommentsDto toItemWithBookingsAndCommentsDto (ItemShort item,
-                                                                                   List<CommentDto> comments) {
+    public static ItemWithBookingsAndCommentsDto toItemWithBookingsAndCommentsDto(ItemShort item,
+                                                                                  List<CommentDto> comments) {
         ItemWithBookingsAndCommentsDto itemDto = new ItemWithBookingsAndCommentsDto();
 
         itemDto.setId(item.getId());

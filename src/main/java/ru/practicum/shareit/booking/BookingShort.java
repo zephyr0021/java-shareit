@@ -6,10 +6,15 @@ import java.time.OffsetDateTime;
 
 public interface BookingShort {
     Long getId();
+
     OffsetDateTime getStart();
+
     OffsetDateTime getEnd();
+
     BookingStatus getStatus();
+
     UserInfo getBooker();
+
     ItemInfo getItem();
 
     interface UserInfo {
@@ -18,6 +23,7 @@ public interface BookingShort {
 
     interface ItemInfo {
         Long getId();
+
         String getName();
     }
 }

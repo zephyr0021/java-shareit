@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Optional<ItemShort> findItemById(Long id);
+
     List<ItemShort> findItemsByOwnerId(Long id);
 
     @Query("SELECT i FROM Item i " +

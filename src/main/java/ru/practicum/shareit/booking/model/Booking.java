@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
  */
 
 @Entity
-@Table(name="bookings")
+@Table(name = "bookings")
 @Data
 public class Booking {
 

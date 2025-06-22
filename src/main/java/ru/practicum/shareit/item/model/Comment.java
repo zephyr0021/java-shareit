@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.model.User;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name="comments")
+@Table(name = "comments")
 @Data
 public class Comment {
 
