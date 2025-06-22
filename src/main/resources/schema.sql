@@ -23,3 +23,11 @@ CREATE TABLE IF NOT EXISTS bookings (
     CONSTRAINT booking_end_after_start CHECK (booking_end > booking_start),
     CONSTRAINT booking_valid_status CHECK (status IN ('WAITING', 'APPROVED', 'REJECTED', 'CANCELLED'))
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    text VARCHAR(1000) NOT NULL,
+    item_id BIGINT REFERENCES items(id) ON DELETE CASCADE,
+    author_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+    created TIMESTAMP WITHOUT TIME ZONE
+)

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Optional<ItemShort> findItemById(Long id);
-    List<ItemShort> findItemsByOwner_Id(Long id);
+    List<ItemShort> findItemsByOwnerId(Long id);
 
     @Query("SELECT i FROM Item i " +
             "WHERE (:query IS NOT NULL AND TRIM(:query) <> '' AND " +

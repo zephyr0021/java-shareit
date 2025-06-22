@@ -29,6 +29,12 @@ public class BookingController {
         return bookingService.getAllBookingsByBooker(userId, state);
     }
 
+    @GetMapping("/owner")
+    public Collection<BookingDto> getBookingsByItemOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                      @RequestParam(defaultValue = "ALL", required = false) String state) {
+        return bookingService.getAllBookingsByOwner(userId, state);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookingDto createBooking(@RequestHeader("X-Sharer-User-Id") Long userId,

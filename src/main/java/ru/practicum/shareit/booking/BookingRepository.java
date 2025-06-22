@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,19 +11,30 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    @Query(
-            "SELECT b FROM Booking b " +
-                    "JOIN FETCH b.item i " +
-                    "WHERE b.id = :id " +
-                    "AND (b.booker.id = :userId OR i.owner.id = :userId)"
-    )
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.id = :id AND (b.booker.id = :userId OR b.item.owner.id = :userId)")
     Optional<BookingShort> findByItemOwnerOrBooker(@Param("id") Long id, @Param("userId") Long userId);
 
     Optional<BookingShort> findBookingById(Long id);
+
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item.id = :itemId " +
+            "AND b.end < :now " +
+            "AND b.status = ru.practicum.shareit.booking.model.BookingStatus.APPROVED")
+    List<BookingShortForItem> findLastBookingForItem(@Param("itemId") Long itemId,
+                                                     @Param("now") OffsetDateTime now, Pageable pageable);
+
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item.id = :itemId " +
+            "AND b.start > :now " +
+            "AND b.status = ru.practicum.shareit.booking.model.BookingStatus.APPROVED")
+    List<BookingShortForItem> findNextBookingForItem(@Param("itemId") Long itemId,
+                                                         @Param("now") OffsetDateTime now, Pageable pageable);
 
     @Modifying
     @Query("UPDATE Booking b SET b.status = :status WHERE b.id = :id AND b.item.owner.id = :ownerId")
@@ -46,4 +58,22 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Collection<BookingShort> findByBookerIdAndStatusAndStartAfter(Long bookerId, BookingStatus status,
                                                                   OffsetDateTime start, Sort sort);
+
+    Collection<BookingShort> findByItemOwnerId(Long ownerId, Sort sort);
+
+    Collection<BookingShort> findByItemOwnerIdAndStatus(Long ownerId, BookingStatus status, Sort sort);
+
+    Collection<BookingShort> findByItemOwnerIdAndStatusAndStartBeforeAndEndAfter(
+            Long ownerId,
+            BookingStatus status,
+            OffsetDateTime start,
+            OffsetDateTime end,
+            Sort sort
+    );
+
+    Collection<BookingShort> findByItemOwnerIdAndStatusAndEndBefore(Long ownerId, BookingStatus status,
+                                                                    OffsetDateTime end, Sort sort);
+
+    Collection<BookingShort> findByItemOwnerIdAndStatusAndStartAfter(Long ownerId, BookingStatus status,
+                                                                     OffsetDateTime start, Sort sort);
 }

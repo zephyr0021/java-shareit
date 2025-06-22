@@ -2,11 +2,12 @@ package ru.practicum.shareit.item.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.item.ItemShort;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.NewItemRequest;
-import ru.practicum.shareit.item.dto.UpdateItemRequest;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemMapper {
@@ -24,6 +25,36 @@ public final class ItemMapper {
 
     public static ItemDto toItemDto(Item item) {
         return fillItemDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable());
+    }
+
+    public static ItemWithBookingsAndCommentsDto toItemWithBookingsAndCommentsDto (ItemShort item,
+                                                                                   BookingForItemDto lastBooking,
+                                                                                   BookingForItemDto nextBooking,
+                                                                                   List<CommentDto> comments) {
+        ItemWithBookingsAndCommentsDto itemDto = new ItemWithBookingsAndCommentsDto();
+
+        itemDto.setId(item.getId());
+        itemDto.setName(item.getName());
+        itemDto.setDescription(item.getDescription());
+        itemDto.setAvailable(item.getAvailable());
+        itemDto.setLastBooking(lastBooking);
+        itemDto.setNextBooking(nextBooking);
+        itemDto.setComments(comments);
+
+        return itemDto;
+    }
+
+    public static ItemWithBookingsAndCommentsDto toItemWithBookingsAndCommentsDto (ItemShort item,
+                                                                                   List<CommentDto> comments) {
+        ItemWithBookingsAndCommentsDto itemDto = new ItemWithBookingsAndCommentsDto();
+
+        itemDto.setId(item.getId());
+        itemDto.setName(item.getName());
+        itemDto.setDescription(item.getDescription());
+        itemDto.setAvailable(item.getAvailable());
+        itemDto.setComments(comments);
+
+        return itemDto;
     }
 
     public static Item updateItemFields(Item item, UpdateItemRequest request) {

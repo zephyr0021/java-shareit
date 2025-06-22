@@ -17,6 +17,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserValidationService;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 
 @Service
@@ -36,7 +37,7 @@ public class BookingService {
 
     public Collection<BookingDto> getAllBookingsByBooker(Long userId, String state) {
         userValidationService.isUserExistOrThrowNotFound(userId);
-        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         Collection<BookingShort> bookings = switch (state) {
             case "ALL" -> bookingRepository.findByBookerId(userId, sort);
@@ -48,6 +49,26 @@ public class BookingService {
                     bookingRepository.findByBookerIdAndStatusAndEndBefore(userId, BookingStatus.APPROVED, now, sort);
             case "FUTURE" ->
                     bookingRepository.findByBookerIdAndStatusAndStartAfter(userId, BookingStatus.APPROVED, now, sort);
+            default -> throw new ServerException("Invalid state");
+        };
+
+        return bookings.stream().map(BookingMapper::toBookingDto).toList();
+    }
+
+    public Collection<BookingDto> getAllBookingsByOwner(Long userId, String state) {
+        userValidationService.isUserExistOrThrowNotFound(userId);
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Collection<BookingShort> bookings = switch (state) {
+            case "ALL" -> bookingRepository.findByItemOwnerId(userId, sort);
+            case "WAITING" -> bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.WAITING, sort);
+            case "REJECTED" -> bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.REJECTED, sort);
+            case "CURRENT" -> bookingRepository.findByItemOwnerIdAndStatusAndStartBeforeAndEndAfter(userId,
+                    BookingStatus.APPROVED, now, now, sort);
+            case "PAST" ->
+                    bookingRepository.findByItemOwnerIdAndStatusAndEndBefore(userId, BookingStatus.APPROVED, now, sort);
+            case "FUTURE" ->
+                    bookingRepository.findByItemOwnerIdAndStatusAndStartAfter(userId, BookingStatus.APPROVED, now, sort);
             default -> throw new ServerException("Invalid state");
         };
 
