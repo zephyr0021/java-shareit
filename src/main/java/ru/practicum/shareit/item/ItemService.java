@@ -18,7 +18,7 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.model.UserValidationService;
+import ru.practicum.shareit.user.UserValidationService;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
