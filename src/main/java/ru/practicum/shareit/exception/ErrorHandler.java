@@ -57,4 +57,11 @@ public class ErrorHandler {
         return new ErrorResponse(e.getName(), e.getMessage());
     }
 
+    @ExceptionHandler()
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleServerException(final ServerException e) {
+        log.warn("Ошибка сервера: {}", e.getMessage());
+        return new ErrorResponse(e.getName(), e.getMessage());
+    }
+
 }

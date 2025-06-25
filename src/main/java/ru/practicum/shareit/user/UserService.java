@@ -3,18 +3,21 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.NewUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
 
@@ -30,34 +33,50 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+    @Transactional
     public UserDto createUser(NewUserRequest request) {
         User user = UserMapper.toUser(request);
         checkEmailUniqueOrThrow(user);
-        user = userRepository.createUser(user);
+        user = userRepository.save(user);
         return UserMapper.toUserDto(user);
     }
 
+    @Transactional
     public UserDto updateUser(Long id, UpdateUserRequest request) {
         User newUser = userRepository.findById(id)
                 .map(user -> UserMapper.updateUserFields(user, request))
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found"));
-        checkEmailUniqueOrThrow(newUser);
-        newUser = userRepository.updateUser(newUser);
+        checkEmailAndIdUniqueOrTrow(newUser);
+        newUser = userRepository.save(newUser);
         return UserMapper.toUserDto(newUser);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
-        userRepository.deleteUser(id);
+        userRepository.deleteById(id);
     }
 
+    @Transactional
     public void clearData() {
-        userRepository.clearData();
+        userRepository.deleteAll();
     }
 
     private void checkEmailUniqueOrThrow(User user) {
-        if (userRepository.existsByEmail(user)) {
+        boolean isUserByEmailExists = !userRepository.findByEmail(user.getEmail()).isEmpty();
+
+        if (isUserByEmailExists) {
             log.warn("User {} already exists", user.getEmail());
             throw new ConflictException("User " + user.getEmail() + " already exists");
         }
+    }
+
+    private void checkEmailAndIdUniqueOrTrow(User user) {
+        boolean isUserByEmailExists = !userRepository.findByEmailAndIdNot(user.getEmail(), user.getId()).isEmpty();
+
+        if (isUserByEmailExists) {
+            log.warn("User {} already exists", user.getEmail());
+            throw new ConflictException("User " + user.getEmail() + " already exists");
+        }
+
     }
 }
