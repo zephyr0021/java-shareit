@@ -12,4 +12,5 @@ public class NewItemRequest {
     private String description;
     @NotNull(message = "available must not be blank or null or empty")
     private Boolean available;
+    private Long requestId;
 }

@@ -13,6 +13,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemMapper {
     public static Item toItem(NewItemRequest request) {
+        if (request.getRequestId() != null) {
+            return fillItem(request.getName(), request.getDescription(), request.getAvailable(), request.getRequestId());
+        }
         return fillItem(request.getName(), request.getDescription(), request.getAvailable());
     }
 
@@ -105,6 +108,16 @@ public final class ItemMapper {
         item.setName(name);
         item.setDescription(description);
         item.setAvailable(available);
+
+        return item;
+    }
+
+    private static Item fillItem(String name, String description, Boolean available, Long requestId) {
+        Item item = new Item();
+        item.setName(name);
+        item.setDescription(description);
+        item.setAvailable(available);
+        item.setRequestId(requestId);
 
         return item;
     }
