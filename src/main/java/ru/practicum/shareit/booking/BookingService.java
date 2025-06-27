@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.UserValidationService;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Collection;
 
 @Service
@@ -27,6 +28,8 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final ItemValidationService itemValidationService;
     private final UserValidationService userValidationService;
+    @Value("${app.timezone}")
+    private String timezone;
 
     public BookingDto getBookingById(Long id, Long userId) {
         userValidationService.isUserExistOrThrowNotFound(userId);
@@ -37,7 +40,7 @@ public class BookingService {
 
     public Collection<BookingDto> getAllBookingsByBooker(Long userId, String state) {
         userValidationService.isUserExistOrThrowNotFound(userId);
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.of(timezone));
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         Collection<BookingShort> bookings = switch (state) {
             case "ALL" -> bookingRepository.findByBookerId(userId, sort);
@@ -57,7 +60,7 @@ public class BookingService {
 
     public Collection<BookingDto> getAllBookingsByOwner(Long userId, String state) {
         userValidationService.isUserExistOrThrowNotFound(userId);
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.of(timezone));
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
         Collection<BookingShort> bookings = switch (state) {
             case "ALL" -> bookingRepository.findByItemOwnerId(userId, sort);

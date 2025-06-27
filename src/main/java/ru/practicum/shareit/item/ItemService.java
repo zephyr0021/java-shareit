@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,7 +22,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.UserValidationService;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -32,6 +33,8 @@ public class ItemService {
     private final UserValidationService userValidationService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    @Value("${app.timezone}")
+    private String timezone;
 
     public ItemWithBookingsAndCommentsDto getItemById(Long userId, Long id) {
         userValidationService.isUserExistOrThrowNotFound(userId);
@@ -48,7 +51,7 @@ public class ItemService {
     }
 
     public List<ItemWithBookingsAndCommentsDto> getAllItemsByUserId(Long userId) {
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.of(timezone));
         userValidationService.isUserExistOrThrowNotFound(userId);
         Pageable lastBookingPage = PageRequest.of(0, 1, Sort.by("end").descending());
         Pageable nextBookingPage = PageRequest.of(0, 1, Sort.by("start").ascending());
@@ -108,7 +111,7 @@ public class ItemService {
 
     @Transactional
     public CommentDto setComment(Long userId, Long itemId, NewCommentRequest request) {
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.of(timezone));
         User user = userValidationService.isUserExistOrThrowNotFound(userId);
         Item item  = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item not found"));

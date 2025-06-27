@@ -3,6 +3,7 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 
 import java.util.List;
 
@@ -29,6 +30,12 @@ public class ItemRequestController {
     @GetMapping("/all")
     public List<ItemRequestDto> getAllItemRequests(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemRequestService.getAllItemRequests(userId);
+    }
+
+    @PostMapping
+    public ItemRequestDto createItemRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                            @RequestBody NewItemRequestRequest request) {
+        return itemRequestService.createItemRequest(userId, request);
     }
 
 

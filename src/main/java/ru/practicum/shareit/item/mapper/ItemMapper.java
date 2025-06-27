@@ -29,10 +29,18 @@ public final class ItemMapper {
     }
 
     public static ItemDtoForItemRequest toItemDtoForItemRequest(ItemRequestShort.ItemInfo item) {
+        return fillItemDtoForItemRequest(item.getId(), item.getName(), item.getOwner().getId());
+    }
+
+    public static ItemDtoForItemRequest toItemDtoForItemRequest(Item item) {
+        return fillItemDtoForItemRequest(item.getId(), item.getName(), item.getOwner().getId());
+    }
+
+    public static ItemDtoForItemRequest fillItemDtoForItemRequest(Long id, String name, Long ownerId) {
         ItemDtoForItemRequest itemDto = new ItemDtoForItemRequest();
-        itemDto.setId(item.getId());
-        itemDto.setName(item.getName());
-        itemDto.setOwnerId(item.getOwner().getId());
+        itemDto.setId(id);
+        itemDto.setName(name);
+        itemDto.setOwnerId(ownerId);
 
         return itemDto;
     }
