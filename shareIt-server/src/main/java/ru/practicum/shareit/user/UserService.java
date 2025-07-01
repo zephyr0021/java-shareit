@@ -43,10 +43,10 @@ public class UserService {
 
     @Transactional
     public UserDto updateUser(Long id, UpdateUserRequest request) {
+        checkEmailAndIdUniqueOrTrow(id, request.getEmail());
         User newUser = userRepository.findById(id)
                 .map(user -> UserMapper.updateUserFields(user, request))
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found"));
-        checkEmailAndIdUniqueOrTrow(newUser);
         newUser = userRepository.save(newUser);
         return UserMapper.toUserDto(newUser);
     }
@@ -70,12 +70,12 @@ public class UserService {
         }
     }
 
-    private void checkEmailAndIdUniqueOrTrow(User user) {
-        boolean isUserByEmailExists = !userRepository.findByEmailAndIdNot(user.getEmail(), user.getId()).isEmpty();
+    private void checkEmailAndIdUniqueOrTrow(Long id, String email) {
+        boolean isUserByEmailExists = !userRepository.findByEmailAndIdNot(email, id).isEmpty();
 
         if (isUserByEmailExists) {
-            log.warn("User {} already exists", user.getEmail());
-            throw new ConflictException("User " + user.getEmail() + " already exists");
+            log.warn("User {} already exists", email);
+            throw new ConflictException("User with email " + email + " already exists");
         }
 
     }
