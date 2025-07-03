@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> {
 
     Optional<ItemRequestShort> findItemRequestById(Long id);
+
     List<ItemRequestShort> findItemRequestsByRequestorId(Long userId, Sort sort);
+
     List<ItemRequestShort> findItemRequestByRequestorIdNot(Long userId, Sort sort);
 }

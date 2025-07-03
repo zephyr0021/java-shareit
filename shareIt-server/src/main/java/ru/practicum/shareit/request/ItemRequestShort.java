@@ -14,7 +14,9 @@ public interface ItemRequestShort {
 
     interface ItemInfo {
         Long getId();
+
         String getName();
+
         OwnerInfo getOwner();
 
         interface OwnerInfo {

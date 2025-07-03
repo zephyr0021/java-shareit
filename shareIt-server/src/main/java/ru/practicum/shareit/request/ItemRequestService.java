@@ -28,9 +28,9 @@ public class ItemRequestService {
 
     public ItemRequestDto getItemRequest(Long userId, Long id) {
         userValidationService.isUserExistOrThrowNotFound(userId);
-        return itemRequestRepository.findItemRequestById(id).
-                map(ItemRequestMapper::toItemRequestDto).
-                orElseThrow(() -> new NotFoundException("ItemRequest not found"));
+        return itemRequestRepository.findItemRequestById(id)
+                .map(ItemRequestMapper::toItemRequestDto)
+                .orElseThrow(() -> new NotFoundException("ItemRequest not found"));
     }
 
     public List<ItemRequestDto> getUserItemRequests(Long userId) {
