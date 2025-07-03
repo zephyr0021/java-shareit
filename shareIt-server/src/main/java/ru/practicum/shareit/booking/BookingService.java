@@ -20,6 +20,7 @@ import ru.practicum.shareit.user.UserValidationService;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +53,7 @@ public class BookingService {
                     bookingRepository.findByBookerIdAndStatusAndEndBefore(userId, BookingStatus.APPROVED, now, sort);
             case "FUTURE" ->
                     bookingRepository.findByBookerIdAndStatusAndStartAfter(userId, BookingStatus.APPROVED, now, sort);
-            default -> throw new ServerException("Invalid state");
+            default -> List.of();
         };
 
         return bookings.stream().map(BookingMapper::toBookingDto).toList();

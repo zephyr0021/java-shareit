@@ -3,7 +3,6 @@ package ru.practicum.shareit.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
-import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,14 +24,6 @@ public class ErrorHandler {
     public ErrorResponse handleConflictException(final ConflictException e) {
         log.warn("Конфликт данных: {}", e.getMessage());
         return new ErrorResponse(e.getName(), e.getMessage());
-    }
-
-    @ExceptionHandler()
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMissingRequestHeaderException(final MissingRequestHeaderException e) {
-        log.warn("Не передан обязательный хэдер: {}", e.getMessage());
-        return new ErrorResponse("missing required header",
-                String.format("Required request header %s is not present", e.getHeaderName()));
     }
 
     @ExceptionHandler()

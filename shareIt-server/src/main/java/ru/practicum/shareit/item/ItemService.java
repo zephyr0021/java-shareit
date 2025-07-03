@@ -134,6 +134,5 @@ public class ItemService {
         comment = commentRepository.save(comment);
 
         return CommentMapper.toCommentDto(comment);
-
     }
 }
