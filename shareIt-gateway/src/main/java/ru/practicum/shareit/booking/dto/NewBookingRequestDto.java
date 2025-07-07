@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @AllArgsConstructor
- @NoArgsConstructor
+@NoArgsConstructor
 public class NewBookingRequestDto {
     @NotNull
     private Long itemId;
