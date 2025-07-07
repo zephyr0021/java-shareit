@@ -15,6 +15,7 @@ import ru.practicum.shareit.item.dto.UpdateItemRequestDto;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -36,7 +37,9 @@ public class ItemValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(item)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("name must not be blank or null or empty"));
         Mockito.verify(itemClient, Mockito.never()).createItem(anyLong(), any());
     }
 
@@ -69,7 +72,9 @@ public class ItemValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(item)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("description must not be blank or null or empty"));
         Mockito.verify(itemClient, Mockito.never()).createItem(anyLong(), any());
     }
 
@@ -102,7 +107,9 @@ public class ItemValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(item)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("available must not be blank or null or empty"));
         Mockito.verify(itemClient, Mockito.never()).createItem(anyLong(), any());
     }
 
@@ -113,7 +120,9 @@ public class ItemValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(item)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("name must not be blank if present"));
         Mockito.verify(itemClient, Mockito.never()).updateItem(anyLong(), anyLong(), any());
     }
 
@@ -130,12 +139,14 @@ public class ItemValidationTests {
 
     @Test
     void updateItemWithEmptyDescription() throws Exception {
-        var item = new UpdateItemRequestDto("", "test", true);
+        var item = new UpdateItemRequestDto("test", "", true);
         mvc.perform(patch("/items/1")
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(item)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("description must not be blank if present"));
         Mockito.verify(itemClient, Mockito.never()).updateItem(anyLong(), anyLong(), any());
     }
 
@@ -157,7 +168,9 @@ public class ItemValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(comment)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("text must not be blank or null or empty"));
         Mockito.verify(itemClient, Mockito.never()).setComment(anyLong(), anyLong(), any());
     }
 

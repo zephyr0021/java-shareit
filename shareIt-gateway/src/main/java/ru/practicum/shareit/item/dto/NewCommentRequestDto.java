@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewCommentRequestDto {
-    @NotBlank(message = "text must not be blank or null or empty")
+    @NotBlank(message = "must not be blank or null or empty")
     private String text;
 }

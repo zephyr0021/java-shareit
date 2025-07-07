@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewItemRequestDto {
-    @NotBlank(message = "name must not be blank or null or empty")
+    @NotBlank(message = "must not be blank or null or empty")
     private String name;
-    @NotBlank(message = "description must not be blank or null or empty")
+    @NotBlank(message = "must not be blank or null or empty")
     private String description;
-    @NotNull(message = "available must not be blank or null or empty")
+    @NotNull(message = "must not be blank or null or empty")
     private Boolean available;
     private Long requestId;
 }

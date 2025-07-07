@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.dto.UpdateUserRequestDto;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
@@ -35,7 +36,9 @@ public class UserValidationTests {
         mvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("name must not be blank or null or empty"));
         Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
@@ -65,7 +68,9 @@ public class UserValidationTests {
         mvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("email must be a well-formed email address"));
         Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
@@ -75,7 +80,9 @@ public class UserValidationTests {
         mvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("email must not be blank or null or empty"));
         Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
@@ -105,9 +112,12 @@ public class UserValidationTests {
         mvc.perform(patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("name must not be blank if present"));
         Mockito.verify(userClient, Mockito.never()).updateUser(anyLong(), any());
     }
+
     @Test
     void updateUserNameWithWhiteSpaceName() throws Exception {
         var user = new UpdateUserRequestDto(" ", null);
@@ -124,7 +134,9 @@ public class UserValidationTests {
         mvc.perform(patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("email must not be blank if present"));
         Mockito.verify(userClient, Mockito.never()).updateUser(anyLong(), any());
     }
 
@@ -144,7 +156,9 @@ public class UserValidationTests {
         mvc.perform(patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("email must be a well-formed email address"));
         Mockito.verify(userClient, Mockito.never()).updateUser(anyLong(), any());
     }
 

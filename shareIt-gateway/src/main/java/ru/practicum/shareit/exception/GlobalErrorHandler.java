@@ -39,7 +39,7 @@ public class GlobalErrorHandler {
 
     @ExceptionHandler()
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMissingRequestHeaderException(final MissingServletRequestParameterException e) {
+    public ErrorResponse handleMissingRequestParameterException(final MissingServletRequestParameterException e) {
         log.warn("Не передан обязательный параметр: {}", e.getMessage());
         return new ErrorResponse("missing required parameter",
                 String.format("Required request parameter %s is not present", e.getParameterName()));

@@ -16,6 +16,7 @@ import java.time.OffsetDateTime;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookingController.class)
@@ -36,7 +37,9 @@ public class BookingValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(booking)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("itemId must not be null"));
         Mockito.verify(bookingClient, Mockito.never()).createBooking(any(), anyLong());
     }
 
@@ -47,7 +50,9 @@ public class BookingValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(booking)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("start must not be null"));
         Mockito.verify(bookingClient, Mockito.never()).createBooking(any(), anyLong());
     }
 
@@ -58,7 +63,9 @@ public class BookingValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(booking)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("end must not be null"));
         Mockito.verify(bookingClient, Mockito.never()).createBooking(any(), anyLong());
     }
 
@@ -69,7 +76,9 @@ public class BookingValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(booking)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("start must be a date in the present or in the future"));
         Mockito.verify(bookingClient, Mockito.never()).createBooking(any(), anyLong());
     }
 
@@ -80,7 +89,9 @@ public class BookingValidationTests {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(booking)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("validation error"))
+                .andExpect(jsonPath("$.message").value("end must be a future date"));
         Mockito.verify(bookingClient, Mockito.never()).createBooking(any(), anyLong());
     }
 
@@ -88,7 +99,9 @@ public class BookingValidationTests {
     void getBookingByBookerWithInvalidState() throws Exception {
         mvc.perform(get("/bookings?state=TEST")
                         .header("X-Sharer-User-Id", 1))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("bad parameter value"))
+                .andExpect(jsonPath("$.message").value("Bad parameter state value"));
         Mockito.verify(bookingClient, Mockito.never()).getBookingByBooker(anyLong(), any());
     }
 
@@ -104,7 +117,9 @@ public class BookingValidationTests {
     void invalidApproveBooking() throws Exception {
         mvc.perform(patch("/bookings/1?approved=test")
                         .header("X-Sharer-User-Id", 1))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("bad parameter value"))
+                .andExpect(jsonPath("$.message").value("Bad parameter approved value"));
         Mockito.verify(bookingClient, Mockito.never()).approveBooking(anyLong(), anyLong(), anyBoolean());
     }
 

@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewUserRequestDto {
-    @NotBlank(message = "name must not be blank or null or empty")
+    @NotBlank(message = "must not be blank or null or empty")
     private String name;
-    @Email(message = "email must be a well-formed email address")
-    @NotBlank(message = "email must not be blank or null or empty")
+    @Email(message = "must be a well-formed email address")
+    @NotBlank(message = "must not be blank or null or empty")
     private String email;
 }
