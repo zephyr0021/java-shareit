@@ -96,12 +96,33 @@ public class BookingValidationTests {
     }
 
     @Test
+    void createBookingWithoutHeader() throws Exception {
+        var booking = new NewBookingRequestDto(1L, OffsetDateTime.now().plusMinutes(5), OffsetDateTime.now().plusMinutes(10));
+        mvc.perform(post("/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(booking)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required header"))
+                .andExpect(jsonPath("$.message").value("Required request header X-Sharer-User-Id is not present"));
+        Mockito.verify(bookingClient, Mockito.never()).createBooking(any(), anyLong());
+    }
+
+    @Test
     void getBookingByBookerWithInvalidState() throws Exception {
         mvc.perform(get("/bookings?state=TEST")
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("bad parameter value"))
                 .andExpect(jsonPath("$.message").value("Bad parameter state value"));
+        Mockito.verify(bookingClient, Mockito.never()).getBookingByBooker(anyLong(), any());
+    }
+
+    @Test
+    void getBookingByBookerWithoutHeader() throws Exception {
+        mvc.perform(get("/bookings?state=ALL"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required header"))
+                .andExpect(jsonPath("$.message").value("Required request header X-Sharer-User-Id is not present"));
         Mockito.verify(bookingClient, Mockito.never()).getBookingByBooker(anyLong(), any());
     }
 
@@ -114,12 +135,40 @@ public class BookingValidationTests {
     }
 
     @Test
+    void getBookingByOwnerWithoutHeader() throws Exception {
+        mvc.perform(get("/bookings/owner?state=ALL"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required header"))
+                .andExpect(jsonPath("$.message").value("Required request header X-Sharer-User-Id is not present"));
+        Mockito.verify(bookingClient, Mockito.never()).getBookingByBooker(anyLong(), any());
+    }
+
+    @Test
     void invalidApproveBooking() throws Exception {
         mvc.perform(patch("/bookings/1?approved=test")
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("bad parameter value"))
                 .andExpect(jsonPath("$.message").value("Bad parameter approved value"));
+        Mockito.verify(bookingClient, Mockito.never()).approveBooking(anyLong(), anyLong(), anyBoolean());
+    }
+
+    @Test
+    void approveBookingWithoutApprove() throws Exception {
+        mvc.perform(patch("/bookings/1?approved=")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required parameter"))
+                .andExpect(jsonPath("$.message").value("Required request parameter approved is not present"));
+        Mockito.verify(bookingClient, Mockito.never()).approveBooking(anyLong(), anyLong(), anyBoolean());
+    }
+
+    @Test
+    void approveBookingWithoutHeader() throws Exception {
+        mvc.perform(patch("/bookings/1?approved=true"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required header"))
+                .andExpect(jsonPath("$.message").value("Required request header X-Sharer-User-Id is not present"));
         Mockito.verify(bookingClient, Mockito.never()).approveBooking(anyLong(), anyLong(), anyBoolean());
     }
 

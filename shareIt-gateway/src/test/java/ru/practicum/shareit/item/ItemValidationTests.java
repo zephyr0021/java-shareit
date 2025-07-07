@@ -114,6 +114,18 @@ public class ItemValidationTests {
     }
 
     @Test
+    void createItemWithoutHeader() throws Exception {
+        var item = new NewItemRequestDto("test", "test", true, null);
+        mvc.perform(post("/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(item)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required header"))
+                .andExpect(jsonPath("$.message").value("Required request header X-Sharer-User-Id is not present"));
+        Mockito.verify(itemClient, Mockito.never()).createItem(anyLong(), any());
+    }
+
+    @Test
     void updateItemWithEmptyName() throws Exception {
         var item = new UpdateItemRequestDto("", "test", true);
         mvc.perform(patch("/items/1")
@@ -162,6 +174,18 @@ public class ItemValidationTests {
     }
 
     @Test
+    void updateItemWithoutHeader() throws Exception {
+        var item = new UpdateItemRequestDto("test", "test", true);
+        mvc.perform(patch("/items/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(item)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required header"))
+                .andExpect(jsonPath("$.message").value("Required request header X-Sharer-User-Id is not present"));
+        Mockito.verify(itemClient, Mockito.never()).updateItem(anyLong(), anyLong(), any());
+    }
+
+    @Test
     void setCommentWithEmptyText() throws Exception {
         var comment = new NewCommentRequestDto("");
         mvc.perform(post("/items/1/comment")
@@ -194,6 +218,27 @@ public class ItemValidationTests {
                         .content(asJson(comment)))
                 .andExpect(status().isBadRequest());
         Mockito.verify(itemClient, Mockito.never()).setComment(anyLong(), anyLong(), any());
+    }
+
+    @Test
+    void setCommentWithoutHeader() throws Exception {
+        var comment = new NewCommentRequestDto("test");
+        mvc.perform(post("/items/1/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(comment)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required header"))
+                .andExpect(jsonPath("$.message").value("Required request header X-Sharer-User-Id is not present"));
+        Mockito.verify(itemClient, Mockito.never()).setComment(anyLong(), anyLong(), any());
+    }
+
+    @Test
+    void searchItemsWithoutText() throws Exception {
+        mvc.perform(get("/items/search?")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required parameter"))
+                .andExpect(jsonPath("$.message").value("Required request parameter text is not present"));
     }
 
     private String asJson(Object obj) throws JsonProcessingException {

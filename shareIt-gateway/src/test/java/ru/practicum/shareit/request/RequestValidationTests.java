@@ -66,6 +66,19 @@ public class RequestValidationTests {
         Mockito.verify(requestClient, Mockito.never()).createItemRequest(anyLong(), any());
     }
 
+    @Test
+    void createItemRequestWithoutHeader() throws Exception {
+        var itemRequest = new NewItemRequestRequestDto("test");
+        mvc.perform(post("/requests")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(itemRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("missing required header"))
+                .andExpect(jsonPath("$.message").value("Required request header X-Sharer-User-Id is not present"));
+
+        Mockito.verify(requestClient, Mockito.never()).createItemRequest(anyLong(), any());
+    }
+
     private String asJson(Object obj) throws JsonProcessingException {
         return objectMapper.writeValueAsString(obj);
     }
