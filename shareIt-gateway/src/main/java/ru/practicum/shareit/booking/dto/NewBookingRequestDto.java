@@ -5,13 +5,17 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.serializer.OffsetDateTimeFromLocalDateTimeDeserializer;
 import ru.practicum.shareit.serializer.OffsetDateTimeToLocalDateTimeSerializer;
 
 import java.time.OffsetDateTime;
 
 @Data
+@AllArgsConstructor
+ @NoArgsConstructor
 public class NewBookingRequestDto {
     @NotNull
     private Long itemId;

@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.dto.NewUserRequestDto;
 import ru.practicum.shareit.user.dto.UpdateUserRequestDto;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,7 +46,7 @@ public class UserControllerTests {
     @Test
     void createUser() throws Exception {
         var user = new NewUserRequestDto("test", "test@mail.ru");
-        when(userClient.createUser(any())).thenReturn(
+        when(userClient.createUser(user)).thenReturn(
                 ResponseEntity.status(HttpStatus.CREATED).body(asJson(user))
         );
         mvc.perform(post("/users")
@@ -60,9 +59,26 @@ public class UserControllerTests {
     @Test
     void updateUser() throws Exception {
         var user = new UpdateUserRequestDto("test_upd", "test@mail.ru");
-        when(userClient.updateUser(anyLong(), any())).thenReturn(
-                ResponseEntity.status(HttpStatus.OK).body(asJson(user))
-        );
+        mvc.perform(patch("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(user)))
+                .andExpect(status().isOk());
+        Mockito.verify(userClient, Mockito.times(1)).updateUser(1L, user);
+    }
+
+    @Test
+    void updateUserName() throws Exception {
+        var user = new UpdateUserRequestDto("test_upd", null);
+        mvc.perform(patch("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(user)))
+                .andExpect(status().isOk());
+        Mockito.verify(userClient, Mockito.times(1)).updateUser(1L, user);
+    }
+
+    @Test
+    void updateUserEmail() throws Exception {
+        var user = new UpdateUserRequestDto(null, "test@mail.ru");
         mvc.perform(patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))

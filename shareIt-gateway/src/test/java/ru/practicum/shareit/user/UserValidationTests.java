@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.dto.NewUserRequestDto;
 import ru.practicum.shareit.user.dto.UpdateUserRequestDto;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,7 +36,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).createUser(user);
+        Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
     @Test
@@ -45,7 +46,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).createUser(user);
+        Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
     @Test
@@ -55,7 +56,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).createUser(user);
+        Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
     @Test
@@ -65,7 +66,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).createUser(user);
+        Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
     @Test
@@ -75,7 +76,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).createUser(user);
+        Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
     @Test
@@ -85,7 +86,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).createUser(user);
+        Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
     @Test
@@ -95,7 +96,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).createUser(user);
+        Mockito.verify(userClient, Mockito.never()).createUser(any());
     }
 
     @Test
@@ -105,7 +106,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).updateUser(1L, user);
+        Mockito.verify(userClient, Mockito.never()).updateUser(anyLong(), any());
     }
     @Test
     void updateUserNameWithWhiteSpaceName() throws Exception {
@@ -114,7 +115,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).updateUser(1L, user);
+        Mockito.verify(userClient, Mockito.never()).updateUser(anyLong(), any());
     }
 
     @Test
@@ -124,7 +125,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).updateUser(1L, user);
+        Mockito.verify(userClient, Mockito.never()).updateUser(anyLong(), any());
     }
 
     @Test
@@ -134,7 +135,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).updateUser(1L, user);
+        Mockito.verify(userClient, Mockito.never()).updateUser(anyLong(), any());
     }
 
     @Test
@@ -144,7 +145,7 @@ public class UserValidationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(user)))
                 .andExpect(status().isBadRequest());
-        Mockito.verify(userClient, Mockito.never()).updateUser(1L, user);
+        Mockito.verify(userClient, Mockito.never()).updateUser(anyLong(), any());
     }
 
 
