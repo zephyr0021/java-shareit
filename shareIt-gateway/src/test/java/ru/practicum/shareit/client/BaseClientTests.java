@@ -54,10 +54,8 @@ public class BaseClientTests {
                 HttpHeaders.EMPTY, errorBody.getBytes(), null
         ));
 
-        // when
         ResponseEntity<Object> response = baseClient.get("/some-path", 1L);
 
-        // then
         assertEquals(status, response.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
         assertEquals(errorBody, response.getBody());
