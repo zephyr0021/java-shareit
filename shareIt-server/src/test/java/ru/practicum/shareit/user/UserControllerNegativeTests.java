@@ -68,4 +68,17 @@ public class UserControllerNegativeTests {
                         .value("User " + request.getEmail() + " already exists"));
     }
 
+    @Test
+    void updateUnknownUser() throws Exception {
+        UpdateUserRequest request = new UpdateUserRequest("John", "testJohn@mail.com");
+        when(userService.updateUser(1L, request))
+                .thenThrow(new NotFoundException("User with id 1 not found"));
+        mvc.perform(patch(url + "/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("not found"))
+                .andExpect(jsonPath("$.message").value("User with id 1 not found"));
+    }
+
 }

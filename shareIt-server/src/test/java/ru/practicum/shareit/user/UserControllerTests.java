@@ -75,7 +75,7 @@ public class UserControllerTests {
     void createUser() throws Exception {
         NewUserRequest request = new NewUserRequest("Soul", "testSoul@mail.com");
         UserDto userDto = new UserDto(1L, "Soul", "testSoul@mail.com");
-        String newUser = mapper.writeValueAsString(request);
+        String newUser = mapper.writeValueAsString(userDto);
 
         when(userService.createUser(request)).thenReturn(userDto);
         mvc.perform(post(url)
