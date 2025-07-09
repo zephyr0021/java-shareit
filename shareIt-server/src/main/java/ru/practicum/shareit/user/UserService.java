@@ -56,11 +56,6 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    @Transactional
-    public void clearData() {
-        userRepository.deleteAll();
-    }
-
     private void checkEmailUniqueOrThrow(User user) {
         boolean isUserByEmailExists = !userRepository.findByEmail(user.getEmail()).isEmpty();
 
