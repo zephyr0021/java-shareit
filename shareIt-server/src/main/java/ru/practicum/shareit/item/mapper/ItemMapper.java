@@ -20,7 +20,7 @@ public final class ItemMapper {
     }
 
     public static Item toItem(ItemShort itemShort) {
-        return fillItem(itemShort.getName(), itemShort.getDescription(), itemShort.getAvailable());
+        return fillItem(itemShort.getId(), itemShort.getName(), itemShort.getDescription(), itemShort.getAvailable());
     }
 
     public static ItemDto toItemDto(ItemShort item) {
@@ -105,6 +105,16 @@ public final class ItemMapper {
 
     private static Item fillItem(String name, String description, Boolean available) {
         Item item = new Item();
+        item.setName(name);
+        item.setDescription(description);
+        item.setAvailable(available);
+
+        return item;
+    }
+
+    private static Item fillItem(Long Id, String name, String description, Boolean available) {
+        Item item = new Item();
+        item.setId(Id);
         item.setName(name);
         item.setDescription(description);
         item.setAvailable(available);

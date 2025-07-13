@@ -83,7 +83,7 @@ public class UserControllerTests {
         when(userService.createUser(request)).thenReturn(userDto);
         mvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(newUser))
+                        .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(newUser, true));
 
@@ -99,7 +99,7 @@ public class UserControllerTests {
         when(userService.updateUser(1L, request)).thenReturn(userDto);
         mvc.perform(patch(url + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(updatedUser))
+                        .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(updatedUser, true));
 
