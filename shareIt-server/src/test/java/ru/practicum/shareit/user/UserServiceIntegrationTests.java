@@ -20,8 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Import(UserService.class)
 @Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 public class UserServiceIntegrationTests {
-    @Autowired UserService userService;
-    @Autowired UserRepository userRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     void createUser() {

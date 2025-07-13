@@ -23,8 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Import({ItemService.class, UserValidationService.class})
 @Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 public class ItemServiceIntegrationTests {
-    @Autowired ItemService itemService;
-    @Autowired ItemRepository itemRepository;
+    @Autowired
+    private ItemService itemService;
+    @Autowired
+    private ItemRepository itemRepository;
 
     @Test
     void createItem() {

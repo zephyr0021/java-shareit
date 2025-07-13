@@ -14,6 +14,7 @@ import ru.practicum.shareit.booking.BookingShortForItem;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserValidationService;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -28,16 +29,19 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceTests {
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
 
     @Mock
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Mock
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
+
+    @Mock
+    private UserValidationService userValidationService;
 
     @InjectMocks
-    ItemService itemService;
+    private ItemService itemService;
 
     private ItemShort itemShort;
     private ItemShort itemShort2;
