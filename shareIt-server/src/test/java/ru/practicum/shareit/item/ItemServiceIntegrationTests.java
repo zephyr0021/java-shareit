@@ -6,17 +6,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.NewItemRequest;
-import ru.practicum.shareit.item.dto.UpdateItemRequest;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ServerException;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserValidationService;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @DataJpaTest
@@ -27,6 +27,15 @@ public class ItemServiceIntegrationTests {
     private ItemService itemService;
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Test
+    void getAllItemsUser() {
+        List<ItemWithBookingsAndCommentsDto> items = itemService.getAllItemsByUserId(4L);
+        assertEquals(4, items.size());
+        assertEquals(3, items.get(2).getLastBooking().getId());
+    }
 
     @Test
     void createItem() {
@@ -70,6 +79,30 @@ public class ItemServiceIntegrationTests {
 
     @Test
     void setComment() {
+        NewCommentRequest request = new NewCommentRequest("testComment");
 
+        CommentDto comment = itemService.setComment(1L, 1L, request);
+        assertEquals(1L, comment.getId());
+        assertEquals(request.getText(), comment.getText());
+        assertEquals("Alice", comment.getAuthorName());
+
+        List<Comment> comments = commentRepository.findAllByItemId(1L);
+        assertEquals(1, comments.size());
+        assertEquals(1L, comments.getFirst().getId());
+        assertEquals(request.getText(), comment.getText());
+        assertEquals("Alice", comment.getAuthorName());
+        assertEquals(1L, comments.getFirst().getItem().getId());
+    }
+
+    @Test
+    void createItemUnknownUser() {
+        NewItemRequest request = new NewItemRequest("book", "bookDescription", true, 5L);
+        assertThrows(NotFoundException.class, () -> itemService.createItem(request, 25L));
+    }
+
+    @Test
+    void notCreateComment() {
+        NewCommentRequest request = new NewCommentRequest("testComment");
+        assertThrows(ServerException.class, () -> itemService.setComment(3L, 2L, request));
     }
 }
