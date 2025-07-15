@@ -23,6 +23,6 @@ VALUES ('unknownItem', 'searchItem', true, 4, 4);
 INSERT INTO bookings(booking_start, booking_end, item_id, booker_id, status)
 VALUES (DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('HOUR', -8, CURRENT_TIMESTAMP), 1, 1, 'APPROVED');
 INSERT INTO bookings(booking_start, booking_end, item_id, booker_id, status)
-VALUES (DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('HOUR', -8, CURRENT_TIMESTAMP), 4, 2, 'WAITING');
+VALUES (DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('HOUR', -8, CURRENT_TIMESTAMP), 4, 1, 'WAITING');
 INSERT INTO bookings(booking_start, booking_end, item_id, booker_id, status)
 VALUES (DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('HOUR', -8, CURRENT_TIMESTAMP), 5, 3, 'APPROVED');

@@ -3,6 +3,8 @@ package ru.practicum.shareit.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
 
 @Component
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class OffsetDateTimeToLocalDateTimeSerializer extends JsonSerializer<OffsetDateTime> {
 
     @Value("${app.timezone}")

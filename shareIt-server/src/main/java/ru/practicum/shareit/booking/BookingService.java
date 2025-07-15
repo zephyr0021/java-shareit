@@ -73,7 +73,7 @@ public class BookingService {
                     bookingRepository.findByItemOwnerIdAndStatusAndEndBefore(userId, BookingStatus.APPROVED, now, sort);
             case "FUTURE" ->
                     bookingRepository.findByItemOwnerIdAndStatusAndStartAfter(userId, BookingStatus.APPROVED, now, sort);
-            default -> throw new ServerException("Invalid state");
+            default -> List.of();
         };
 
         return bookings.stream().map(BookingMapper::toBookingDto).toList();
