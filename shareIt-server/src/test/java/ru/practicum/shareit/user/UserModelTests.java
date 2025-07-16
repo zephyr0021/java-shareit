@@ -1,5 +1,8 @@
 package ru.practicum.shareit.user;
 
+import org.instancio.Instancio;
+import org.instancio.Model;
+import org.instancio.Select;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.user.model.User;
 
@@ -9,17 +12,13 @@ public class UserModelTests {
 
     @Test
     void testEqualsAndHashCode() {
-        User user1 = new User();
-        user1.setId(1L);
-        user1.setName("Kirk");
-        user1.setEmail("kirk@example.com");
+        Model<User> model = Instancio.of(User.class)
+                .set(Select.field("id"), 1L)
+                .toModel();
+        User user = Instancio.create(model);
+        User user2 = Instancio.create(model);
 
-        User user2 = new User();
-        user2.setId(1L);
-        user2.setName("John");
-        user2.setEmail("john@example.com");
-
-        assertEquals(user1, user2);
-        assertEquals(user1.hashCode(), user2.hashCode());
+        assertEquals(user, user2);
+        assertEquals(user.hashCode(), user2.hashCode());
     }
 }
