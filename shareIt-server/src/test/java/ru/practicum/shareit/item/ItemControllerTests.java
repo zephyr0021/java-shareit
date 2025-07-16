@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.item.dto.*;
 
 import static org.mockito.Mockito.when;
@@ -134,5 +135,20 @@ public class ItemControllerTests {
                 .andExpect(content().json(expectedJson));
 
         Mockito.verify(itemService, Mockito.times(1)).setComment(1L, 1L, request);
+    }
+
+    @Test
+    void notUpdateItem() throws Exception {
+        UpdateItemRequest request = new UpdateItemRequest("book_upd", "descr_upd", false);
+
+        when(itemService.updateItem(1L, 1L, request)).thenThrow(new AccessDeniedException("Cannot access to this item"));
+
+        mvc.perform(patch(url + "/1")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("access denied"))
+                .andExpect(jsonPath("$.message").value("Cannot access to this item"));
     }
 }

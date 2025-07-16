@@ -18,7 +18,7 @@ public class ItemRequestModelTests {
         ItemRequest request = Instancio.create(model);
         ItemRequest request2 = Instancio.create(model);
 
-        assertEquals(request, request);
+        assertEquals(request, request2);
         assertEquals(request.hashCode(), request2.hashCode());
 
     }

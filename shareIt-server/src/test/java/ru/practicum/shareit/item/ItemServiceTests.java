@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingShortForItem;
+import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -153,6 +155,21 @@ public class ItemServiceTests {
     }
 
     @Test
+    void createItemWithoutRequestId() {
+        when(itemRepository.save(any(Item.class))).thenReturn(item2);
+
+        NewItemRequest request = new NewItemRequest(item2.getName(), item2.getDescription(), item2.getAvailable(), null);
+
+        ItemDto item = itemService.createItem(request, 2L);
+
+        assertEquals(item2.getId(), item.getId());
+        assertEquals(item2.getName(), item.getName());
+        assertEquals(item2.getDescription(), item.getDescription());
+        assertEquals(item2.getAvailable(), item.getAvailable());
+
+    }
+
+    @Test
     void updateItem() {
         when(itemShort.getId()).thenReturn(item2.getId());
         when(itemShort.getName()).thenReturn(item2.getName());
@@ -170,5 +187,19 @@ public class ItemServiceTests {
         assertEquals(item2.getName(), updItem.getName());
         assertEquals(item2.getDescription(), updItem.getDescription());
         assertEquals(item2.getAvailable(), updItem.getAvailable());
+    }
+
+    @Test
+    void cannotUpdateItemAcess() {
+        when(itemShort.getId()).thenReturn(item2.getId());
+        when(itemShort.getName()).thenReturn(item2.getName());
+        when(itemShort.getDescription()).thenReturn(item2.getDescription());
+        when(itemShort.getAvailable()).thenReturn(item2.getAvailable());
+        when(itemRepository.findItemById(item2.getId())).thenReturn(Optional.of(itemShort));
+        when(itemRepository.findItemsByOwnerId(1L)).thenReturn(List.of());
+
+        UpdateItemRequest request = new UpdateItemRequest(item2.getName(), item2.getDescription(), item2.getAvailable());
+
+        assertThrows(AccessDeniedException.class, () -> itemService.updateItem(1L, item2.getId(), request));
     }
 }

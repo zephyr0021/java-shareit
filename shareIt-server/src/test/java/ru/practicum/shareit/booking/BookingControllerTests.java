@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
+import ru.practicum.shareit.exception.ServerException;
 
 import java.util.List;
 
@@ -106,5 +107,18 @@ public class BookingControllerTests {
                 .andExpect(content().json(expectedJson));
 
         Mockito.verify(bookingService, Mockito.times(1)).approveBooking(booking.getId(), 1L, true);
+    }
+
+    @Test
+    void createBookingItemNotAvailable() throws Exception {
+        NewBookingRequest request = new NewBookingRequest(booking.getItem().getId(), booking.getStart(), booking.getEnd());
+        when(bookingService.createBooking(any(NewBookingRequest.class), eq(1L))).thenThrow(new ServerException("Item is not available"));
+        mvc.perform(post(url)
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request).replaceAll("Z", "")))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").value("server error"))
+                .andExpect(jsonPath("$.message").value("Item is not available"));
     }
 }
