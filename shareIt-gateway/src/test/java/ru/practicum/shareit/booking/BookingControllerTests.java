@@ -81,7 +81,7 @@ public class BookingControllerTests {
 
     @Test
     void createBooking() throws Exception {
-        var booking = new NewBookingRequestDto(1L, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(10), OffsetDateTime.now(ZoneOffset.UTC ).plusSeconds(30));
+        var booking = new NewBookingRequestDto(1L, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(10), OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(30));
         when(bookingClient.createBooking(booking, 1L)).thenReturn(
                 ResponseEntity.status(HttpStatus.CREATED).body(asJson(booking))
         );
