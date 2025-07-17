@@ -15,7 +15,10 @@ import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.booking.dto.NewBookingRequestDto;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,7 +81,7 @@ public class BookingControllerTests {
 
     @Test
     void createBooking() throws Exception {
-        var booking = new NewBookingRequestDto(1L, OffsetDateTime.now().plusSeconds(10), OffsetDateTime.now().plusSeconds(30));
+        var booking = new NewBookingRequestDto(1L, OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(10), OffsetDateTime.now(ZoneOffset.UTC ).plusSeconds(30));
         when(bookingClient.createBooking(booking, 1L)).thenReturn(
                 ResponseEntity.status(HttpStatus.CREATED).body(asJson(booking))
         );
@@ -89,7 +92,13 @@ public class BookingControllerTests {
                 .content(asJson(booking)))
                 .andExpect(status().isCreated());
 
-        Mockito.verify(bookingClient, Mockito.times(1)).createBooking(booking, 1L);
+        Mockito.verify(bookingClient, Mockito.times(1)).createBooking(
+                argThat(dto ->
+                        dto.getItemId().equals(booking.getItemId()) &&
+                                dto.getStart().toInstant().equals(booking.getStart().toInstant()) &&
+                                dto.getEnd().toInstant().equals(booking.getEnd().toInstant())
+                ),
+                eq(1L));
     }
 
     @Test
