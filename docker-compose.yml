@@ -7,6 +7,11 @@ services:
       - "8080:8080"
     depends_on:
       - server
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
 
@@ -18,6 +23,11 @@ services:
       - "9090:9090"
     depends_on:
       - db
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9090/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
       - SPRING_DATASOURCE_USERNAME=dbuser
