@@ -92,7 +92,4 @@ public class BookingIntegrationTests {
         assertEquals(savedBooking1.getId(), bookingList.getFirst().getId());
     }
 
-    
-
-
 }

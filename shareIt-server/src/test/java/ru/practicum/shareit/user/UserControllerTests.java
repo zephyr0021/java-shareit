@@ -130,8 +130,8 @@ public class UserControllerTests {
     void createUserConflictData() throws Exception {
         NewUserRequest request = new NewUserRequest("John", "testJohn@mail.com");
 
-        when(userService.createUser(request)).
-                thenThrow(new ConflictException("User " + request.getEmail() + " already exists"));
+        when(userService.createUser(request))
+                .thenThrow(new ConflictException("User " + request.getEmail() + " already exists"));
         mvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
