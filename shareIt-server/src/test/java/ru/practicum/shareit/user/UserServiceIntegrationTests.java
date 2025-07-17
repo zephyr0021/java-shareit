@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
+import ru.practicum.shareit.EmbeddedPostgresBaseTest;
 import ru.practicum.shareit.user.dto.NewUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Optional;
@@ -15,11 +17,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Transactional
 @DataJpaTest
-@Import(UserService.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserServiceIntegrationTests {
+@Sql(scripts = {"/schema.sql", "/data.sql"})
+@Import(UserService.class)
+public class UserServiceIntegrationTests extends EmbeddedPostgresBaseTest {
     @Autowired
     private UserService userService;
     @Autowired
@@ -28,9 +30,9 @@ public class UserServiceIntegrationTests {
     @Test
     void createUser() {
         NewUserRequest request = new NewUserRequest("Heisenberg", "MetKing@example.com");
-        userService.createUser(request);
+        UserDto savedUser = userService.createUser(request);
 
-        Optional<User> user = userRepository.findById(5L);
+        Optional<User> user = userRepository.findById(savedUser.getId());
 
         assertTrue(user.isPresent());
         assertEquals(request.getName(), user.get().getName());

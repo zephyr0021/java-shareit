@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.EmbeddedPostgresBaseTest;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ServerException;
 import ru.practicum.shareit.item.dto.*;
@@ -21,8 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(scripts = {"/schema.sql", "/data.sql"})
 @Import({ItemService.class, UserValidationService.class})
-public class ItemServiceIntegrationTests {
+public class ItemServiceIntegrationTests extends EmbeddedPostgresBaseTest {
     @Autowired
     private ItemService itemService;
     @Autowired

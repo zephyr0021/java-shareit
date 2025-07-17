@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.EmbeddedPostgresBaseTest;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
 import ru.practicum.shareit.booking.model.Booking;
@@ -14,6 +16,7 @@ import ru.practicum.shareit.item.ItemValidationService;
 import ru.practicum.shareit.user.UserValidationService;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -22,8 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(scripts = {"/schema.sql", "/data.sql"})
 @Import({BookingService.class, ItemValidationService.class, UserValidationService.class})
-public class BookingIntegrationTests {
+public class BookingIntegrationTests extends EmbeddedPostgresBaseTest {
     @Autowired
     private BookingService bookingService;
     @Autowired
@@ -40,8 +44,8 @@ public class BookingIntegrationTests {
         Optional<BookingShort> createdBooking = bookingRepository.findBookingById(booking.getId());
         assertTrue(createdBooking.isPresent());
         assertEquals(4L, createdBooking.get().getId());
-        assertEquals(request.getStart().toInstant(), createdBooking.get().getStart().toInstant());
-        assertEquals(request.getEnd().toInstant(), createdBooking.get().getEnd().toInstant());
+        assertEquals(request.getStart().truncatedTo(ChronoUnit.SECONDS).toInstant(), createdBooking.get().getStart().truncatedTo(ChronoUnit.SECONDS).toInstant());
+        assertEquals(request.getEnd().truncatedTo(ChronoUnit.SECONDS).toInstant(), createdBooking.get().getEnd().truncatedTo(ChronoUnit.SECONDS).toInstant());
     }
 
     @Test

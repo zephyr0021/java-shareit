@@ -4,11 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ShareItTests {
+class ShareItTests extends EmbeddedPostgresBaseTest {
 
 	@Test
-	void mainMethodTest() {
-		ShareItApp.main(new String[] {});
+	void contextLoads() {
 	}
-
 }
