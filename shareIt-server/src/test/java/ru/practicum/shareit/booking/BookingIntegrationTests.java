@@ -2,9 +2,9 @@ package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({BookingService.class, ItemValidationService.class, UserValidationService.class})
-@Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 public class BookingIntegrationTests {
     @Autowired
     private BookingService bookingService;
@@ -40,8 +40,8 @@ public class BookingIntegrationTests {
         Optional<BookingShort> createdBooking = bookingRepository.findBookingById(booking.getId());
         assertTrue(createdBooking.isPresent());
         assertEquals(4L, createdBooking.get().getId());
-        assertEquals(request.getStart(), createdBooking.get().getStart());
-        assertEquals(request.getEnd(), createdBooking.get().getEnd());
+        assertEquals(request.getStart().toInstant(), createdBooking.get().getStart().toInstant());
+        assertEquals(request.getEnd().toInstant(), createdBooking.get().getEnd().toInstant());
     }
 
     @Test

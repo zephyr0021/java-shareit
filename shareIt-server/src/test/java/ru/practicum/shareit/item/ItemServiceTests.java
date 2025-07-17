@@ -155,6 +155,24 @@ public class ItemServiceTests {
     }
 
     @Test
+    void searchItems() {
+        when(itemRepository.searchItemsByQuery(anyString())).thenReturn(List.of(itemShort, itemShort2));
+        List<ItemDto> searchedItems = itemService.searchItems(1L, "test");
+        assertEquals(2, searchedItems.size());
+        ItemDto itemDto = searchedItems.getFirst();
+        assertEquals(itemShort.getId(), itemDto.getId());
+        assertEquals(itemShort.getName(), itemDto.getName());
+        assertEquals(itemShort.getDescription(), itemDto.getDescription());
+        assertEquals(itemShort.getAvailable(), itemDto.getAvailable());
+        ItemDto itemDto2 = searchedItems.get(1);
+        assertEquals(itemShort2.getId(), itemDto2.getId());
+        assertEquals(itemShort2.getName(), itemDto2.getName());
+        assertEquals(itemShort2.getDescription(), itemDto2.getDescription());
+        assertEquals(itemShort2.getAvailable(), itemDto2.getAvailable());
+
+    }
+
+    @Test
     void createItemWithoutRequestId() {
         when(itemRepository.save(any(Item.class))).thenReturn(item2);
 
