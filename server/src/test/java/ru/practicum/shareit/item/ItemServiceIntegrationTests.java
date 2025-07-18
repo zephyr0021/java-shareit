@@ -2,12 +2,10 @@ package ru.practicum.shareit.item;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.EmbeddedPostgresBaseTest;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ServerException;
 import ru.practicum.shareit.item.dto.*;
@@ -22,10 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Sql(scripts = {"/schema.sql", "/data.sql"})
+@Sql(scripts = "/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Import({ItemService.class, UserValidationService.class})
-public class ItemServiceIntegrationTests extends EmbeddedPostgresBaseTest {
+public class ItemServiceIntegrationTests {
     @Autowired
     private ItemService itemService;
     @Autowired
@@ -42,7 +39,7 @@ public class ItemServiceIntegrationTests extends EmbeddedPostgresBaseTest {
 
     @Test
     void createItem() {
-        NewItemRequest request = new NewItemRequest("book", "bookDescription", true, 5L);
+        NewItemRequest request = new NewItemRequest("book", "bookDescription", true, 4L);
 
         itemService.createItem(request, 1L);
 

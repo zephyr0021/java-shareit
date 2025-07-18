@@ -2,12 +2,10 @@ package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.EmbeddedPostgresBaseTest;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
 import ru.practicum.shareit.booking.model.Booking;
@@ -24,10 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Sql(scripts = {"/schema.sql", "/data.sql"})
+@Sql(scripts = "/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Import({BookingService.class, ItemValidationService.class, UserValidationService.class})
-public class BookingIntegrationTests extends EmbeddedPostgresBaseTest {
+public class BookingIntegrationTests {
     @Autowired
     private BookingService bookingService;
     @Autowired
