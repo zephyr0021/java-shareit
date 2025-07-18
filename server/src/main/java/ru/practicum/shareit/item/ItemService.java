@@ -18,6 +18,8 @@ import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.UserValidationService;
 
@@ -33,6 +35,7 @@ public class ItemService {
     private final UserValidationService userValidationService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
     @Value("${app.timezone}")
     private String timezone;
 
@@ -89,7 +92,12 @@ public class ItemService {
     public ItemDto createItem(NewItemRequest request, Long userId) {
         User user = userValidationService.isUserExistOrThrowNotFound(userId);
         Item item = ItemMapper.toItem(request);
+        ItemRequest itemRequest = null;
+        if (request.getRequestId() != null) {
+            itemRequest = itemRequestRepository.findById(request.getRequestId()).orElse(null);
+        }
         item.setOwner(user);
+        item.setRequest(itemRequest);
         item = itemRepository.save(item);
 
         return ItemMapper.toItemDto(item);

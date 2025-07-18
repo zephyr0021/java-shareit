@@ -50,7 +50,7 @@ public class ItemServiceIntegrationTests {
         assertEquals(request.getName(), item.get().getName());
         assertEquals(request.getDescription(), item.get().getDescription());
         assertEquals(request.getAvailable(), item.get().getAvailable());
-        assertEquals(request.getRequestId(), item.get().getRequestId());
+        assertEquals(request.getRequestId(), item.get().getRequest().getId());
         assertEquals(1, userItems.size());
         assertEquals(userItems.getFirst().getId(), item.get().getId());
     }

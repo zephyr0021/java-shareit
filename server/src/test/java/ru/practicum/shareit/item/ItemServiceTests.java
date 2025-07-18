@@ -15,6 +15,7 @@ import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserValidationService;
 
 import java.time.OffsetDateTime;
@@ -38,6 +39,9 @@ public class ItemServiceTests {
 
     @Mock
     private BookingRepository bookingRepository;
+
+    @Mock
+    private ItemRequestRepository itemRequestRepository;
 
     @Mock
     private UserValidationService userValidationService;
@@ -144,7 +148,7 @@ public class ItemServiceTests {
     void createItem() {
         when(itemRepository.save(any(Item.class))).thenReturn(item2);
 
-        NewItemRequest request = new NewItemRequest(item2.getName(), item2.getDescription(), item2.getAvailable(), item2.getRequestId());
+        NewItemRequest request = new NewItemRequest(item2.getName(), item2.getDescription(), item2.getAvailable(), item2.getRequest().getId());
 
         ItemDto item = itemService.createItem(request, 2L);
 
@@ -175,7 +179,6 @@ public class ItemServiceTests {
     @Test
     void createItemWithoutRequestId() {
         when(itemRepository.save(any(Item.class))).thenReturn(item2);
-
         NewItemRequest request = new NewItemRequest(item2.getName(), item2.getDescription(), item2.getAvailable(), null);
 
         ItemDto item = itemService.createItem(request, 2L);
