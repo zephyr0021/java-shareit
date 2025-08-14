@@ -1,0 +1,45 @@
+CREATE TABLE IF NOT EXISTS users
+(
+    id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name  VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS requests
+(
+    id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    description  VARCHAR(500) NOT NULL,
+    requestor_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
+    created      TIMESTAMP WITHOUT TIME ZONE
+);
+
+CREATE TABLE IF NOT EXISTS items
+(
+    id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name         VARCHAR(200)  NOT NULL,
+    description  VARCHAR(1000) NOT NULL,
+    is_available BOOLEAN       NOT NULL,
+    user_id      BIGINT REFERENCES users (id) ON DELETE CASCADE,
+    request_id   BIGINT REFERENCES requests (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS bookings
+(
+    id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    booking_start TIMESTAMP WITHOUT TIME ZONE,
+    booking_end   TIMESTAMP WITHOUT TIME ZONE,
+    item_id       BIGINT REFERENCES items (id) ON DELETE CASCADE,
+    booker_id     BIGINT REFERENCES users (id) ON DELETE CASCADE,
+    status        VARCHAR(20) NOT NULL DEFAULT 'WAITING',
+    CONSTRAINT booking_end_after_start CHECK (booking_end > booking_start),
+    CONSTRAINT booking_valid_status CHECK (status IN ('WAITING', 'APPROVED', 'REJECTED', 'CANCELLED'))
+);
+
+CREATE TABLE IF NOT EXISTS comments
+(
+    id        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    text      VARCHAR(1000) NOT NULL,
+    item_id   BIGINT REFERENCES items (id) ON DELETE CASCADE,
+    author_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
+    created   TIMESTAMP WITHOUT TIME ZONE
+);
